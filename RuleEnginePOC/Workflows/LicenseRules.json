@@ -13,21 +13,8 @@
               "RuleName": "MinorLicense",
               "ErrorMessage": "Failed",
               "ErrorType": "Error",
-              "Operator": "AndAlso",
-              "Rules": [
-                {
-                  "RuleName": "Is17",
-                  "Expression": "basicInfo.age > 17"
-                },
-                {
-                  "RuleName": "AndHasPreReqs",
-                  "Expression": "preReqs.visionTestPassed = true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 50"
-                },
-                {
-                  "RuleName": "IsKSCitizen",
-                  "Expression": "Utils.CheckContains(basicInfo.county, \"douglas,usa,canada,France\") == true"
-                }
-              ]
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age > 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 50 AND Utils.CheckContains(basicInfo.county, \"douglas,usa,canada,France\") == true"
             },
             {
               "RuleName": "OrAdultLicense",
