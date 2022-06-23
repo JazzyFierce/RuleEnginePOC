@@ -1,0 +1,19 @@
+{
+  "basicInfo": {
+    "name": "Phoenix Wright",
+    "age": 24,
+    "county": "Leavenworth"
+  },
+  "preReqs": {
+    "visionTestPassed": true,
+    "driversEdPassed": false,
+    "parentalApproval": false,
+    "writtenTestPassed": false,
+    "hoursDrivenAffadavit": 0
+  },
+  "previousLicenseMonthsHeld": {
+    "instructionPermit": 11.9,
+    "restrictedPermit": 0
+  },
+  "activeRestrictions": "None"
+}

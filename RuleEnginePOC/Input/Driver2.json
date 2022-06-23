@@ -1,0 +1,19 @@
+{
+  "basicInfo": {
+    "name": "Maya Fey",
+    "age": 17,
+    "county": "Douglas"
+  },
+  "preReqs": {
+    "visionTestPassed": true,
+    "driversEdPassed": true,
+    "parentalApproval": true,
+    "writtenTestPassed": false,
+    "hoursDrivenAffadavit": 0
+  },
+  "previousLicenseMonthsHeld": {
+    "instructionPermit": 14,
+    "restrictedPermit": 0
+  },
+  "activeRestrictions": "None"
+}
