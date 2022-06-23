@@ -1,23 +1,11 @@
-﻿/*
-Notes for 6-23
-Problems
-Line 98: childResult.ExceptionMessage results in empty string...?
-
-Questions/concerns
-Line 17: how to obtain file relative to project rather than device?
-Line 33: how is patientinfo stored/how should i represent it in this POC?
-Line 64: theoretically rules could be infintely nested, which would provide more details upon failure but might be difficult to iterate through
-Line 76: is there a workaround or is it on the user to order their rules correctly?
-Line 88: there has got to be a more efficient way to do this.
-*/
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RulesEngine.HelperFunctions;
 using RulesEngine.Models;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Reflection;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
 namespace RuleEnginePOC
@@ -32,7 +20,7 @@ namespace RuleEnginePOC
             {
                 throw new Exception("Rules not found.");
             }
-
+  
             //converting json to workflow
             var fileData = File.ReadAllText(files[0]);
             var workflow = JsonConvert.DeserializeObject<List<Workflow>>(fileData);
@@ -40,13 +28,13 @@ namespace RuleEnginePOC
             //rules engine setup and initialize
 #pragma warning disable CS0436 // Type conflicts with imported type
             var reSettingsWithCustomTypes = new ReSettings { CustomTypes = new Type[] { typeof(Utils) } };
-#pragma warning restore CS0436 // This is the only way it works soooo...
+#pragma warning restore CS0436 
             var bre = new RulesEngine.RulesEngine(workflow?.ToArray(), null, reSettingsWithCustomTypes);
 
             Console.WriteLine($"Running BasicDemo.....");
             //driverinfo
-            dynamic input1 = new BasicInfo(60, "abc", "canada");
-            dynamic input2 = new PreReqs(true, true, true, true, 60);
+            dynamic input1 = new BasicInfo(6, "abc", "canada");
+            dynamic input2 = new PreReqs(true, true, true, true, 90);
             dynamic input3 = new PreviousLicensesMonthsHeld(12, 4);
             dynamic input4 = new ActiveRestrictions(false, false, false);
 
@@ -103,7 +91,7 @@ namespace RuleEnginePOC
                     {
                         foreach (var childResult in childResults)
                         {
-                            Console.WriteLine($"{childResult.Rule.RuleName}: {childResult.IsSuccess}");
+                            Console.WriteLine($"{childResult.Rule.RuleName}: {childResult.IsSuccess}: {childResult.ExceptionMessage}");
                         }
                     }
                 }
@@ -111,4 +99,3 @@ namespace RuleEnginePOC
         }
     }
 }
-
