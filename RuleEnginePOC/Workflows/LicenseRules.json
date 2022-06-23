@@ -1,0 +1,98 @@
+  [
+    {
+      "WorkflowName": "LicenseRules",
+      "Rules": [
+        {
+          "RuleName": "NonRestrictedPermit",
+          "SuccessEvent": "Driver Qualifies for a Non-Restricted Permit",
+          "ErrorMessage": "One or more adjust rules failed.",
+          "ErrorType": "Error",
+          "Operator": "OrElse",
+          "Rules": [
+            {
+              "RuleName": "MinorLicense",
+              "ErrorMessage": "Failed",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age > 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 50 AND Utils.CheckContains(basicInfo.county, \"douglas,usa,canada,France\") == true"
+            },
+            {
+              "RuleName": "OrAdultLicense",
+              "ErrorMessage": "Failed",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age >= 18 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed"
+            }
+          ]
+        },
+        {
+          "RuleName": "LessRestrictedPermit",
+          "SuccessEvent": "Driver Qualifies for a less restricted permit",
+          "ErrorMessage": "One or more adjust rules failed",
+          "ErrorType": "Error",
+          "Operator": "OrElse",
+          "Rules": [
+            {
+              "RuleName": "DriversEdPassed",
+              "ErrorMessage": "Failed",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age == 16 AND preReqs.visionTestPassed == true AND preReqs.driversEdPassed == true AND preReqs.hoursDrivenAffadavit >= 50 AND previousLicenseMonthsHeld.instructionPermit >= 12"
+            },
+            {
+              "RuleName": "OrWrittenTestPassed",
+              "ErrorMessage": "Failed",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age == 16 AND preReqs.visionTestPassed == true AND preReqs.writtenTestPassed == true AND preReqs.hoursDrivenAffadavit >= 50 AND previousLicenseMonthsHeld.instructionPermit >= 12"
+            }
+          ]
+        },
+        {
+          "RuleName": "RestrictedPermit",
+          "SuccessEvent": "Driver Qualifies for a Restricted Permit",
+          "ErrorMessage": "One or more adjust rules failed.",
+          "ErrorType": "Error",
+          "RuleExpressionType": "LambdaExpression",
+          "Expression": "basicInfo.age == 15 AND preReqs.visionTestPassed = true AND preReqs.parentalApproval == true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 25 AND previousLicenseMonthsHeld.instructionPermit >= 12"
+        },
+        {
+          "RuleName": "Instruction Permit Ages 14, 15, 16",
+          "SuccessEvent": "Driver qualifies for Instruction Permit",
+          "ErrorMessage": "One or more adjust rules failed.",
+          "ErrorType": "Error",
+          "Operator": "OrElse",
+          "Rules": [
+            {
+              "RuleName": "Below17WithDriversEd",
+              "ErrorMessage": "Does not qualify",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age <= 16 AND basicInfo.age >= 14 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true AND preReqs.parentalApproval == true"
+            },
+            {
+              "RuleName": "OrBelow17WithWrittenTest",
+              "ErrorMessage": "One or more adjust rules failed.",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age <= 16 AND basicInfo.age >= 14 AND preReqs.visionTestPassed = true AND preReqs.writtenTestPassed == true AND preReqs.parentalApproval == true"
+            },
+            {
+              "RuleName": "Or17UpWithDriversEd",
+              "ErrorMessage": "One or more adjust rules failed.",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age >= 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true"
+            },
+            {
+              "RuleName": "Or17UpWithWrittenTest",
+              "ErrorMessage": "One or more adjust rules failed.",
+              "ErrorType": "Error",
+              "RuleExpressionType": "LambdaExpression",
+              "Expression": "basicInfo.age >= 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true"
+            }
+          ]
+        }
+      ]
+    }
+  ] 
