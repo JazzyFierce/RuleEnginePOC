@@ -1,98 +1,252 @@
-  [
-    {
-      "WorkflowName": "LicenseRules",
-      "Rules": [
-        {
-          "RuleName": "NonRestrictedPermit",
-          "SuccessEvent": "Driver Qualifies for a Non-Restricted Permit",
-          "ErrorMessage": "One or more adjust rules failed.",
-          "ErrorType": "Error",
-          "Operator": "OrElse",
-          "Rules": [
-            {
-              "RuleName": "MinorLicense",
-              "ErrorMessage": "Failed",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age > 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 50 AND Utils.CheckContains(basicInfo.county, \"douglas,usa,canada,France\") == true"
-            },
-            {
-              "RuleName": "OrAdultLicense",
-              "ErrorMessage": "Failed",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age >= 18 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed"
+[
+  {
+    "WorkflowName": "LicenseRules",
+    "Rules": [
+      {
+        "RuleName": "BasicRequirementsMet",
+        "LocalParams": [
+          {
+            "Name": "isadult",
+            "Expression": "basicInfo.age >= 16"
+          }
+        ],
+        "Operator": "AndAlso",
+        "Rules": [
+          {
+            "RuleName": "HasCertification",
+            "ErrorMessage": "Driver must have passed a written test or have a certificate of completion from Driver's Ed to apply for a license",
+            "ErrorType": "Error",
+            "Expression": "preReqs.driversEdPassed == true OR preReqs.writtenTestPassed == true"
+          },
+          {
+            "RuleName": "AndIsKSResident",
+            "ErrorMessage": "Must live in one of the following counties: Douglas, Leavenworth, Johnson, Wyandotte",
+            "ErrorType": "Error",
+            "Expression": "Utils.CheckContains(basicInfo.county, \"Douglas,Leavenworth,Johnson,Wyandotte\")"
+          },
+          {
+            "RuleName": "AndPassedVisionTest",
+            "ErrorMessage": "Must pass vision test",
+            "ErrorType": "Error",
+            "Expression": "preReqs.visionTestPassed == true"
+          },
+          {
+            "RuleName": "AndMinimumAge",
+            "ErrorMessage": "Must be at least 14 years old to apply for a license",
+            "ErrorType": "Error",
+            "Expression": "basicInfo.age >= 14"
+          },
+          {
+            "RuleName": "AndNoActiveRestrictions",
+            "ErrorMessage": "Driver must have no active restrictions",
+            "ErrorType": "Error",
+            "Expression": "activeRestrictions == \"None\""
+          }
+        ],
+        "Actions": {
+          "OnSuccess": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "GraduatedNonRestricted"
             }
-          ]
-        },
-        {
-          "RuleName": "LessRestrictedPermit",
-          "SuccessEvent": "Driver Qualifies for a less restricted permit",
-          "ErrorMessage": "One or more adjust rules failed",
-          "ErrorType": "Error",
-          "Operator": "OrElse",
-          "Rules": [
-            {
-              "RuleName": "DriversEdPassed",
-              "ErrorMessage": "Failed",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age == 16 AND preReqs.visionTestPassed == true AND preReqs.driversEdPassed == true AND preReqs.hoursDrivenAffadavit >= 50 AND previousLicenseMonthsHeld.instructionPermit >= 12"
-            },
-            {
-              "RuleName": "OrWrittenTestPassed",
-              "ErrorMessage": "Failed",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age == 16 AND preReqs.visionTestPassed == true AND preReqs.writtenTestPassed == true AND preReqs.hoursDrivenAffadavit >= 50 AND previousLicenseMonthsHeld.instructionPermit >= 12"
+          },
+          "OnFailure": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"No license available\""
             }
-          ]
-        },
-        {
-          "RuleName": "RestrictedPermit",
-          "SuccessEvent": "Driver Qualifies for a Restricted Permit",
-          "ErrorMessage": "One or more adjust rules failed.",
-          "ErrorType": "Error",
-          "RuleExpressionType": "LambdaExpression",
-          "Expression": "basicInfo.age == 15 AND preReqs.visionTestPassed = true AND preReqs.parentalApproval == true AND preReqs.driversEdPassed AND preReqs.hoursDrivenAffadavit >= 25 AND previousLicenseMonthsHeld.instructionPermit >= 12"
-        },
-        {
-          "RuleName": "Instruction Permit Ages 14, 15, 16",
-          "SuccessEvent": "Driver qualifies for Instruction Permit",
-          "ErrorMessage": "One or more adjust rules failed.",
-          "ErrorType": "Error",
-          "Operator": "OrElse",
-          "Rules": [
-            {
-              "RuleName": "Below17WithDriversEd",
-              "ErrorMessage": "Does not qualify",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age <= 16 AND basicInfo.age >= 14 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true AND preReqs.parentalApproval == true"
-            },
-            {
-              "RuleName": "OrBelow17WithWrittenTest",
-              "ErrorMessage": "One or more adjust rules failed.",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age <= 16 AND basicInfo.age >= 14 AND preReqs.visionTestPassed = true AND preReqs.writtenTestPassed == true AND preReqs.parentalApproval == true"
-            },
-            {
-              "RuleName": "Or17UpWithDriversEd",
-              "ErrorMessage": "One or more adjust rules failed.",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age >= 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true"
-            },
-            {
-              "RuleName": "Or17UpWithWrittenTest",
-              "ErrorMessage": "One or more adjust rules failed.",
-              "ErrorType": "Error",
-              "RuleExpressionType": "LambdaExpression",
-              "Expression": "basicInfo.age >= 17 AND preReqs.visionTestPassed = true AND preReqs.driversEdPassed == true"
-            }
-          ]
+          }
         }
-      ]
-    }
-  ] 
+      },
+      {
+        "RuleName": "GraduatedNonRestricted",
+        "Expression": "preciousLicenseMonthsHeld.restrictedPermit >= 6",
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver qualifies for Non-restrictedpermit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "NonRestrictedMinorLicense"
+            }
+          }
+        }
+
+      },
+      {
+        "RuleName": "NonRestrictedMinorLicense",
+        "Operator": "And",
+        "Rules": [
+          {
+            "RuleName": "Is17Up",
+            "Expression": "basicInfo.age >= 17"
+          },
+          {
+            "RuleName": "50HoursDriven",
+            "ErrorMessage": "Driver must submit a 50 hour affadavit",
+            "Expression": "preReqs.hoursDrivenAffadavit >= 50"
+          }
+        ],
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver qualifies for a Non-restricted Permit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "NonRestrictedAdultLicense"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "NonRestrictedAdultLicense",
+        "Expression": "basicInfo.age >= 18",
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver qualifies for a Non-restricted Permit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "LessRestrictedPermit"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "LessRestrictedPermit",
+        "Operator": "AndAlso",
+        "Rules": [
+          {
+            "RuleName": "Is16Up",
+            "Expression": "basicInfo.age == 16"
+          },
+          {
+            "RuleName": "AndSubmitted50Hrs",
+            "Expression": "preReqs.hoursDrivenAffadavit >= 50"
+          }
+        ],
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver Qualifies for less restricted permit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "RuleName": "RestrictedPermit"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "RestrictedPermit",
+        "Operator": "And",
+        "Rules": [
+          {
+            "RuleName": "Is15",
+            "Expression": "basicInfo.age == 15"
+          },
+          {
+            "RuleName": "AndHasParentalApproval",
+            "Expression": "preReqs.parentalApproval == true"
+          },
+          {
+            "RuleName": "AndPassedDriversEd",
+            "Expression": "preReqs.driversEdPassed == true"
+          },
+          {
+            "RuleName": "AndHas25Hrs",
+            "Expression": "preReqs.hoursDrivenAffadavit >= 25"
+          },
+          {
+            "RuleName": "InstructionPermitHeld",
+            "Expression": "previousLicenseMonthsHeld.instructionPermit >= 12"
+          }
+        ],
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver qualifies for restricted permit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "InstructionPermit"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "InstructionPermit",
+        "Expression": "basicInfo.age >= 17",
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "Driver qualifies for instruction permit"
+            }
+          },
+          "OnFailure": {
+            "Name": "EvaluateRule",
+            "Context": {
+              "WorkflowName": "LicenseRules",
+              "ruleName": "YoungDriverInstructionPermit"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "YoungDriverInstructionPermit",
+        "Operator": "And",
+        "ErrorMessage": "\"Drivers under 16 must have parental approval\"",
+        "Rules": [
+          {
+            "RuleName": "Is16Below",
+            "Expression": "basicInfo.age <= 16"
+          },
+          {
+            "RuleName": "HasParentApproval",
+            "ErrorMessage": "Drivers less 16 years or younger must have parental approval",
+            "Expression": "preReqs.parentalApproval == true"
+          }
+        ],
+        "Actions": {
+          "OnSuccess": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"Driver qualifies for instruction permit\""
+            }
+          },
+          "OnFailure": {
+            "Name": "OutputExpression",
+            "Context": {
+              "Expression": "\"No license available\""
+            }
+          }
+        }
+      }
+    ]
+  }
+]
