@@ -1,17 +1,14 @@
 ﻿using Newtonsoft.Json;
 using RulesEngine.HelperFunctions;
 using RulesEngine.Models;
-using System;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
 using static RulesEngine.Extensions.ListofRuleResultTreeExtension;
 
 namespace RuleEnginePOC
 {
     public class BasicDemo
     {
-        public void Run()
+        public async void Run()
         {
             //obtaining file with rules
             var files = Directory.GetFiles("Workflows");
@@ -28,9 +25,9 @@ namespace RuleEnginePOC
 #pragma warning disable CS0436 // Type conflicts with imported type
             var reSettingsWithCustomTypes = new ReSettings { CustomTypes = new Type[] { typeof(Utils) } };
 #pragma warning restore CS0436
-            var bre = new RulesEngine.RulesEngine(workflow?.ToArray(), null, reSettingsWithCustomTypes);
+            var re = new RulesEngine.RulesEngine(workflow?.ToArray(), null, reSettingsWithCustomTypes);
 
-            Console.WriteLine($"Running BasicDemo.....");
+            Console.WriteLine("Summary\n-------------------------------");
             //driverinfo
 
             var driversInfo = Directory.GetFiles("Input");
@@ -55,65 +52,38 @@ namespace RuleEnginePOC
                 var rp3 = new RuleParameter("previousLicenseMonthsHeld", input3);
                 var rp4 = new RuleParameter("activeRestrictions", input4);
 
-                //Basic tests
-                List<RuleResultTree> resultList = bre.ExecuteAllRulesAsync("LicenseRules", rp1, rp2, rp3, rp4).Result;
-                string licenseGiven = "No licenses available";
-
-                //the first rule satisfied (if any) assigns a new value to "license given"
-                resultList.OnSuccess((eventName) => {
-                    licenseGiven = $"{eventName}";
-                });
-
-                //if no rules are satisfied
-                resultList.OnFail(() => {
-                    licenseGiven = "The user is not eligible for any license.";
-                });
-
-                Console.WriteLine("\n" + licenseGiven);
-
-            }
-
-            
-
-            //check each rule
-            /*foreach (var result in resultList)
-            {
-                Console.WriteLine($"\nRule - {result.Rule.RuleName} - {result.IsSuccess}");
-                if (!result.IsSuccess)
+                var ruleParameters = new RuleParameter[]
                 {
-                    Console.WriteLine($"Details: {result.ExceptionMessage}");
-                }
+                    rp1,
+                    rp2,
+                    rp3,
+                    rp4
+                };
 
-                IEnumerable<RuleResultTree> childResults = result.ChildResults;
-                if (childResults != null)
+                var result = await re.ExecuteActionWorkflowAsync("LicenseRules", "BasicRequirementsMet", ruleParameters);
+                string messageToWrite = $"Driver: {input1.name}\nResult: {result.Output}";
+
+                if (result.Output is "No license available")
                 {
-                    foreach (var childResult in childResults)
+                    messageToWrite += "\nDetails:";
+                    var basicRequirementsTreeList = result.Results; //i.e. every rule that was executed before failure condition
+                    var lastExecutedRule = basicRequirementsTreeList[0]; //Rule that will give relevant error messages
+                    var lastExecutedRuleLeaves = lastExecutedRule.ChildResults; 
+                    
+                    if (lastExecutedRuleLeaves != null)
                     {
-                        //childResult.ExceptionMessage results in empty string
-                        Console.WriteLine($"{childResult.Rule.RuleName}: {childResult.IsSuccess}");
-                    }
-                }
-            }*/
-
-
-
-            //check a specific rule
-            /*foreach (var result in resultList)
-            {
-                if (result.Rule.RuleName == "Instruction Permit Ages 14, 15, 16")
-                {
-                    Console.Write($"{result.Rule.RuleName}: {result.IsSuccess}");
-
-                    IEnumerable<RuleResultTree> childResults = result.ChildResults;
-                    if (childResults != null && !result.IsSuccess)
-                    {
-                        foreach (var childResult in childResults)
+                        foreach (var childResult in lastExecutedRuleLeaves)
                         {
-                            Console.WriteLine($"{childResult.Rule.RuleName}: {childResult.IsSuccess}");
+                            if (!childResult.IsSuccess)
+                            {
+                                messageToWrite += $"\nRule Name: {lastExecutedRule.Rule.RuleName} --- Message: {childResult.Rule.ErrorMessage}";
+                            }
                         }
-                    }
+                    }                  
                 }
-            }*/
+
+                Console.WriteLine(messageToWrite +"\n");
+            }
         }
     }
 }
