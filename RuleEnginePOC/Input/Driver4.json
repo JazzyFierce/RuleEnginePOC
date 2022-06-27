@@ -1,18 +1,18 @@
 {
   "basicInfo": {
-    "name": "Trucy Wright",
-    "age": 14,
+    "name": "Kay Faraday",
+    "age": 15,
     "county": "Leavenworth"
   },
   "preReqs": {
     "visionTestPassed": true,
     "driversEdPassed": true,
-    "parentalApproval": true,
+    "parentalApproval": false,
     "writtenTestPassed": false,
-    "hoursDrivenAffadavit": 0
+    "hoursDrivenAffadavit": 30
   },
   "previousLicenseMonthsHeld": {
-    "instructionPermit": 0,
+    "instructionPermit": 10,
     "restrictedPermit": 0
   },
   "activeRestrictions": "None"

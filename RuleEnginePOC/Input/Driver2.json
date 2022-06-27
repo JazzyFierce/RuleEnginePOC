@@ -1,19 +1,19 @@
 {
   "basicInfo": {
     "name": "Maya Fey",
-    "age": 17,
-    "county": "Douglas"
+    "age": 18,
+    "county": "Shawnee"
   },
   "preReqs": {
-    "visionTestPassed": true,
+    "visionTestPassed": false,
     "driversEdPassed": true,
     "parentalApproval": true,
     "writtenTestPassed": false,
-    "hoursDrivenAffadavit": 0
+    "hoursDrivenAffadavit": 80
   },
   "previousLicenseMonthsHeld": {
     "instructionPermit": 14,
-    "restrictedPermit": 0
+    "restrictedPermit": 10
   },
   "activeRestrictions": "None"
 }

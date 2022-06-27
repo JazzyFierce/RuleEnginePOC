@@ -1,18 +1,18 @@
 {
   "basicInfo": {
-    "name": "Trucy Wright",
-    "age": 14,
+    "name": "Franziska von Karma",
+    "age": 16,
     "county": "Leavenworth"
   },
   "preReqs": {
     "visionTestPassed": true,
     "driversEdPassed": true,
     "parentalApproval": true,
-    "writtenTestPassed": false,
-    "hoursDrivenAffadavit": 0
+    "writtenTestPassed": true,
+    "hoursDrivenAffadavit": 50
   },
   "previousLicenseMonthsHeld": {
-    "instructionPermit": 0,
+    "instructionPermit": 12,
     "restrictedPermit": 0
   },
   "activeRestrictions": "None"

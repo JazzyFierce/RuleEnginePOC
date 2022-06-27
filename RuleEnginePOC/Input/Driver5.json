@@ -1,18 +1,18 @@
 {
   "basicInfo": {
-    "name": "Trucy Wright",
-    "age": 14,
+    "name": "Ema Skye",
+    "age": 15,
     "county": "Leavenworth"
   },
   "preReqs": {
     "visionTestPassed": true,
     "driversEdPassed": true,
     "parentalApproval": true,
-    "writtenTestPassed": false,
-    "hoursDrivenAffadavit": 0
+    "writtenTestPassed": true,
+    "hoursDrivenAffadavit": 25
   },
   "previousLicenseMonthsHeld": {
-    "instructionPermit": 0,
+    "instructionPermit": 13,
     "restrictedPermit": 0
   },
   "activeRestrictions": "None"
