@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace RulesEngine.HelperFunctions
 {
-    public static class Utils
+    public static class Util
     {
         public static bool CheckContains(string check, string valList)
         {

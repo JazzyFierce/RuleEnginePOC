@@ -22,9 +22,9 @@ namespace RuleEnginePOC
             var workflow = JsonConvert.DeserializeObject<List<Workflow>>(fileData);
 
             //rules engine setup and initialize
-#pragma warning disable CS0436 // Type conflicts with imported type
-            var reSettingsWithCustomTypes = new ReSettings { CustomTypes = new Type[] { typeof(Utils) } };
-#pragma warning restore CS0436
+
+            var reSettingsWithCustomTypes = new ReSettings { CustomTypes = new Type[] { typeof(Util) } };
+
             var re = new RulesEngine.RulesEngine(workflow?.ToArray(), null, reSettingsWithCustomTypes);
 
             Console.WriteLine("Summary\n-------------------------------");
@@ -62,7 +62,7 @@ namespace RuleEnginePOC
 
                 var result = await re.ExecuteActionWorkflowAsync("LicenseRules", "BasicRequirementsMet", ruleParameters);
                 string messageToWrite = $"Driver: {input1.name}\nResult: {result.Output}";
-
+                
                 if (result.Output is "No license available")
                 {
                     messageToWrite += "\nDetails:";

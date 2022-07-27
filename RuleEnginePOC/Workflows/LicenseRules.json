@@ -22,7 +22,7 @@
             "RuleName": "AndIsKSResident",
             "ErrorMessage": "Must live in one of the following counties: Douglas, Leavenworth, Johnson, Wyandotte",
             "ErrorType": "Error",
-            "Expression": "Utils.CheckContains(basicInfo.county, \"Douglas,Leavenworth,Johnson,Wyandotte\")"
+            "Expression": "Util.CheckContains(basicInfo.county, \"Douglas,Leavenworth,Johnson,Wyandotte\")"
           },
           {
             "RuleName": "AndPassedVisionTest",
@@ -60,7 +60,6 @@
         }
       },
       {
-        "RuleName": "GraduatedNonRestricted",
         "Expression": "preciousLicenseMonthsHeld.restrictedPermit >= 6",
         "Actions": {
           "OnSuccess": {
