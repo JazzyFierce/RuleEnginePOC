@@ -60,6 +60,7 @@
         }
       },
       {
+        "RuleName": "GraduatedNonRestricted",
         "Expression": "preciousLicenseMonthsHeld.restrictedPermit >= 6",
         "Actions": {
           "OnSuccess": {
